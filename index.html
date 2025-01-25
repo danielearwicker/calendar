@@ -1,0 +1,113 @@
+<html>
+    <head>
+        <style>
+            @page {
+                size: A4 landscape;
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+            }
+
+            .year {
+                font-size: 36pt;
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 0.5em;
+            }
+
+            .months {
+                font-size: 10pt;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: center;
+                gap: 3em;
+            }
+
+            .month {
+                border: 1px solid black;
+                padding: 10px;
+                height: 10.5em;
+                width: 13em;
+            }
+
+            .name {
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 0.5em;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            th,
+            td {
+                border: 1px solid silver;
+                padding: 5px;
+                text-align: center;
+                font-size: 7pt;
+                line-height: 0.7em;
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+            function element(parent, name, className) {
+                const e = document.createElement(name);
+                e.className = className;
+                parent.appendChild(e);
+                return e;
+            }
+
+            const days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+
+            function monthName(n) {
+                return new Date(2021, n, 1).toLocaleString("default", {
+                    month: "long",
+                });
+            }
+
+            function calendar(parent, year) {
+                element(parent, "div", "year").textContent = "" + year;
+
+                const monthsDiv = element(parent, "div", "months");
+
+                for (let n = 0; n < 12; n++) {
+                    const monthDiv = element(monthsDiv, "div", "month");
+                    element(monthDiv, "div", "name").textContent = monthName(n);
+
+                    const monthTable = element(monthDiv, "table");
+                    const headerRow = element(monthTable, "tr");
+
+                    for (const name of days) {
+                        element(headerRow, "th").textContent = name;
+                    }
+
+                    let day = new Date(year, n, 1);
+                    while (day.getDay() !== 1) {
+                        day.setDate(day.getDate() - 1);
+                    }
+
+                    while (
+                        day.getFullYear() < year ||
+                        (day.getMonth() <= n && day.getFullYear() === year)
+                    ) {
+                        const weekRow = element(monthTable, "tr");
+
+                        for (let i = 0; i < 7; i++) {
+                            element(weekRow, "td").textContent =
+                                day.getMonth() === n ? day.getDate() : "";
+                            day.setDate(day.getDate() + 1);
+                        }
+                    }
+                }
+            }
+
+            calendar(document.body, new Date().getFullYear());
+        </script>
+    </body>
+</html>
